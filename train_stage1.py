@@ -41,7 +41,7 @@ if __name__ == '__main__':
     dev_gt_dict, dev_dlr=get_dataloader(batch_size=1,part="dev",dn=args.dn,rso=args.rso)
     """saving model"""
     model_tag = 'seed{}_lr{:7f}_wd{}_bs{}_Seql{}_Gl{}_Rso{}_v1{}_v2{}'.format(args.seed, args.lr, args.wd, args.bs, args.seql,args.glayer,args.rso,args.v1,args.v2)
-    modelpath="./checkpoints/%s/FDN/%s/"%(args.dn,model_tag)
+    modelpath="./checkpoints/baseline/%s/FDN/%s/"%(args.dn,model_tag)
     os.makedirs(modelpath, exist_ok=True)
     print(modelpath)
     """Training"""

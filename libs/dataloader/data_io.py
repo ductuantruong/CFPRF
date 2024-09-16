@@ -249,7 +249,7 @@ def get_dataloader(batch_size,part,dn,rso):
     assert part in ['train', 'dev','test']
     if dn=="PS":
         part=part.replace("test","eval")
-        dst=ASVspoof2019PS(path="/data/wujy/audio/ps",part=part,rso=rso)######
+        dst=ASVspoof2019PS(path="/data/spk_corpora/PartialSpoof/database",part=part,rso=rso)######
     elif dn=='HAD':
         dst=HAD(path='/data/wujy/audio/HAD', part=part, rso=rso)####
     elif dn=='LAVDF':
