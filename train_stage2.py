@@ -35,7 +35,7 @@ if __name__ == '__main__':
     """loading FDN_model"""
     print("loading FDN_model")
     FDN_model = CFPRF_FDN(seq_len=args.seql, gmlp_layers=args.glayer).to(device)
-    FDN_modelpath = "./checkpoints/1FDN_%s.pth"%(args.dn)
+    FDN_modelpath = "checkpoints/baseline/PS/FDN/seed1234_lr0.000001_wd0.0001_bs2_Seql1070_Gl1_Rso20_v10.25_v20.1/e18_devEER1.530_devmAP0.580.pth"
     FDN_model.load_state_dict(torch.load(FDN_modelpath))
     for name, param in FDN_model.named_parameters(): # freeze
         param.requires_grad = False
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     RPN_model = CFPRF_PRN(device=device).to(device)
     """saving model"""
     model_tag = '{}_seed{}_lr{:7f}_wd{}_bs{}_rso{}'.format(os.path.basename(FDN_modelpath).rstrip('.pth'),args.seed, args.lr, args.wd, args.bs, args.rso)
-    modelpath="./checkpoints/%s/PRN/%s/"%(args.dn,model_tag)
+    modelpath="./checkpoints/baseline/%s/PRN/%s/"%(args.dn,model_tag)
     os.makedirs(modelpath, exist_ok=True)
     print(modelpath)
     """Training"""
