@@ -7,6 +7,7 @@ from libs.dataloader.data_io import get_dataloader
 from libs.startup_config import set_random_seed
 from libs.wrapper_PRN import *
 import warnings
+import os
 warnings.filterwarnings("ignore")
 __author__ = "Junyan Wu"
 __email__ = "wujy298@mail2.sysu.edu.cn"
@@ -21,6 +22,7 @@ if __name__ == '__main__':
     parser.add_argument('--stop_epoch', type=int, default=10)
     parser.add_argument('--seed', type=int, default=1234)
     parser.add_argument('--dn', type=str, default="PS")
+    parser.add_argument('--exp_name', type=str)
     parser.add_argument('--seql', type=int, default=1070)
     parser.add_argument('--rso', type=int, default=20)
     parser.add_argument('--glayer', type=int, default=1) 
@@ -35,7 +37,7 @@ if __name__ == '__main__':
     """loading FDN_model"""
     print("loading FDN_model")
     FDN_model = CFPRF_FDN(seq_len=args.seql, gmlp_layers=args.glayer).to(device)
-    FDN_modelpath = "checkpoints/baseline/PS/FDN/seed1234_lr0.000001_wd0.0001_bs2_Seql1070_Gl1_Rso20_v10.25_v20.1/e18_devEER1.530_devmAP0.580.pth"
+    FDN_modelpath = "./checkpoints/%s/%s/FDN/best_model_stage1.pth"%(args.exp_name,args.dn)
     FDN_model.load_state_dict(torch.load(FDN_modelpath))
     for name, param in FDN_model.named_parameters(): # freeze
         param.requires_grad = False
@@ -44,7 +46,8 @@ if __name__ == '__main__':
     RPN_model = CFPRF_PRN(device=device).to(device)
     """saving model"""
     model_tag = '{}_seed{}_lr{:7f}_wd{}_bs{}_rso{}'.format(os.path.basename(FDN_modelpath).rstrip('.pth'),args.seed, args.lr, args.wd, args.bs, args.rso)
-    modelpath="./checkpoints/baseline/%s/PRN/%s/"%(args.dn,model_tag)
+    print('model_tag: ', model_tag)
+    modelpath="./checkpoints/%s/%s/PRN/"%(args.exp_name,args.dn)
     os.makedirs(modelpath, exist_ok=True)
     print(modelpath)
     """Training"""
@@ -68,6 +71,10 @@ if __name__ == '__main__':
             best_dev_mAP, stop=dev_fp_mAP, 0
             if args.save:
                 torch.save(RPN_model.state_dict(), os.path.join(modelpath, 'e{}_FPmAP{:.3f}.pth'.format(epoch,dev_fp_mAP)))
+                if os.path.islink(os.path.join(modelpath, 'best_model_stage2.pth')):
+                    os.unlink(os.path.join(modelpath, 'best_model_stage2.pth'))
+                os.symlink('e{}_FPmAP{:.3f}.pth'.format(epoch,dev_fp_mAP), 
+                           os.path.join(modelpath, 'best_model_stage2.pth'))
         else:
             stop+=1
             continue

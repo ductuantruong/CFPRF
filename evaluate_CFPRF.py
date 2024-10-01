@@ -111,8 +111,9 @@ def PRN_performance_excel(gt_dict,proposal_dict):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('python evaluate_CFPRF.py --dn HAD/PS/LAVDF')
     parser.add_argument('--seed', type=int, default=1234)
-    parser.add_argument('--save_path', type=str, default="./result/baseline") # ['HAD','PS','LAVDF']
+    parser.add_argument('--save_path', type=str, default="./result/") # ['HAD','PS','LAVDF']
     parser.add_argument('--dn', type=str, default="HAD") # ['HAD','PS','LAVDF']
+    parser.add_argument('--exp_name', type=str)
     parser.add_argument('--seql', type=int, default=1070)
     parser.add_argument('--rso', type=int, default=20)
     parser.add_argument('--glayer', type=int, default=1) 
@@ -133,13 +134,14 @@ if __name__ == '__main__':
     ├── 2PRN_LAVDF.pth
     ├── 2PRN_PS.pth
     """
-    FDN_checkpoint="./checkpoints/baseline/PS/FDN/seed1234_lr0.000001_wd0.0001_bs2_Seql1070_Gl1_Rso20_v10.25_v20.1/e18_devEER1.530_devmAP0.580.pth"
+    FDN_checkpoint="./checkpoints/%s/%s/FDN/best_model_stage1.pth"%(args.exp_name,args.dn)
     FDN_model.load_state_dict(torch.load(FDN_checkpoint))
     """loading PRN model"""
     RPN_model = CFPRF_PRN(device=device).to(device)
-    PRN_modelpath="./checkpoints/baseline/PS/PRN/e18_devEER1.530_devmAP0.580_seed1234_lr0.001000_wd0.001_bs2_rso20/e13_FPmAP0.714.pth"
+    PRN_modelpath="./checkpoints/%s/%s/PRN/best_model_stage2.pth"%(args.exp_name,args.dn)
     RPN_model.load_state_dict(torch.load(PRN_modelpath))
     """makedir"""
+    args.save_path += args.exp_name
     dict_save_path=os.path.join(args.save_path,'dict/%s_'%(args.dn))
     csv_save_path=os.path.join(args.save_path,'pd/%s_'%(args.dn))
     os.makedirs(os.path.dirname(dict_save_path),exist_ok=True)

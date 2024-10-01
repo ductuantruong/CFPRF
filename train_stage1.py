@@ -8,6 +8,7 @@ import libs.loss.crl_loss as crl_loss
 from libs.startup_config import set_random_seed
 from libs.wrapper_FDN import *
 import warnings
+import os
 warnings.filterwarnings("ignore")
 __author__ = "Junyan Wu"
 __email__ = "wujy298@mail2.sysu.edu.cn"
@@ -24,6 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('--stop_epoch', type=int, default=10)
     parser.add_argument('--seed', type=int, default=1234)
     parser.add_argument('--dn', type=str, default="PS")
+    parser.add_argument('--exp_name', type=str)
     parser.add_argument('--seql', type=int, default=1070)
     parser.add_argument('--rso', type=int, default=20)
     parser.add_argument('--v1', type=float, default=0.25)
@@ -41,7 +43,8 @@ if __name__ == '__main__':
     dev_gt_dict, dev_dlr=get_dataloader(batch_size=1,part="dev",dn=args.dn,rso=args.rso)
     """saving model"""
     model_tag = 'seed{}_lr{:7f}_wd{}_bs{}_Seql{}_Gl{}_Rso{}_v1{}_v2{}'.format(args.seed, args.lr, args.wd, args.bs, args.seql,args.glayer,args.rso,args.v1,args.v2)
-    modelpath="./checkpoints/baseline/%s/FDN/%s/"%(args.dn,model_tag)
+    print('model_tag: ', model_tag)
+    modelpath="./checkpoints/%s/%s/FDN/"%(args.exp_name,args.dn)
     os.makedirs(modelpath, exist_ok=True)
     print(modelpath)
     """Training"""
@@ -67,6 +70,10 @@ if __name__ == '__main__':
             best_dev_eer, best_dev_mAP, stop = dev_eer, dev_mAP, 0
             if args.save:
                 torch.save(model.state_dict(), os.path.join(modelpath, 'e{}_devEER{:.3f}_devmAP{:.3f}.pth'.format(epoch,dev_eer,dev_mAP)))
+                if os.path.islink(os.path.join(modelpath, 'best_model_stage1.pth')):
+                    os.unlink(os.path.join(modelpath, 'best_model_stage1.pth'))
+                os.symlink('e{}_devEER{:.3f}_devmAP{:.3f}.pth'.format(epoch,dev_eer,dev_mAP), 
+                           os.path.join(modelpath, 'best_model_stage1.pth'))
         else:
             stop+=1
             continue
