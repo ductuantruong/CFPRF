@@ -14,9 +14,12 @@ It is recommended that you install Python 3.8 or higher. We followed the install
 
 
 ```bash
-conda create -n SSL python=3.8 numpy=1.23.5
+conda create -n SSL python=3.8.0 numpy=1.23.5
 conda activate SSL
+pip install pip==24.0
 pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
+pip install soundfile==0.11.0 librosa==0.9.1
+pip install pandas scikit-learn
 --------------install fairseq for XLSR--------------
 git clone https://github.com/TakHemlata/SSL_Anti-spoofing.git
 cd fairseq-a54021305d6b3c4c5959ac9395135f63202db8f1
@@ -24,29 +27,22 @@ pip install --editable ./
 ```
 
 
-## 2. For Testing 
-We provide checkpoints and corresponding output results, which can be downloaded from [GoogleDrive](https://drive.google.com/drive/folders/1ygN-9v9bfZPKu9aLaGD6WKR_ld8vtGsz?usp=sharing). Put them on this folder:
+## 2. Change the data path of PartialSpoof (PS) corpus 
+Change the PS corpus path in [this line](https://github.com/ductuantruong/CFPRF/blob/ac736a0d191d00afbec786daa402706363d7402a/libs/dataloader/data_io.py#L252) to the corresponding path on your local machine (e.g. /data/PartialSpoof/database). The PS corpus folder should have this items:
 ```
-./checkpoints
-├── 1FDN_HAD.pth
-├── 1FDN_LAVDF.pth
-├── 1FDN_PS.pth
-├── 2PRN_HAD.pth
-├── 2PRN_LAVDF.pth
-├── 2PRN_PS.pth
+/data/PartialSpoof/database
+├── train/
+├── dev/
+├── eval/
+├── segment_labels/
+├── protocols/
+├── ...
 ```
 
 ### 2.1 Run 🚀
 
-Evaluating checkpoints for different datasets to get the results:
-
- - ```python evaluate_CFPRF.py --eval --dn PS --save_path ./results```
-
- - ```python evaluate_CFPRF.py --eval --dn HAD --save_path ./results```
-
- - ```python evaluate_CFPRF.py --eval --dn LAVDF --save_path ./results```
-
-If you want to produce results from a saved '.npy' file, then remove `--eval` from the above command.
+Training & evaluating checkpoints for PS the dataset:
+```bash run.sh```
 
 
 ### 2.2 PDF Evaluation Results
