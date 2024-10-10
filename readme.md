@@ -39,45 +39,11 @@ Change the PS corpus path in [this line](https://github.com/ductuantruong/CFPRF/
 ├── ...
 ```
 
-### 2.1 Run 🚀
-
+### 3. Run 🚀
 Training & evaluating checkpoints for PS the dataset:
-```bash run.sh```
-
-
-### 2.2 PDF Evaluation Results
-
-| **Dataset** | **EER** | **AUC** | **PRE** | **REC** | **F1** |
-|-------------|---------|---------|---------|---------|--------|
-| HAD         | 0.08    | 99.96   | 99.98   | 99.92   | 99.95  |
-| PS          | 7.41    | 96.97   | 95.23   | 92.59   | 93.89  |
-| LAV-DF      | 0.82    | 99.89   | 99.95   | 99.18   | 99.56  |
-
-
-
-### 2.3 TFL Evaluation Results
-
-| **Dataset** | **AP@0.5** | **AP@0.75** | **AP@0.95** | **mAP** | **AR@20** |
-|-------------|------------|-------------|-------------|---------|-----------|
-| HAD         | 99.77      | 99.60       | 96.03       | 99.23   | 99.38     |
-| PS          | 66.34      | 55.47       | 40.96       | 55.22   | 66.53     |
-| LAV-DF      | 94.52      | 93.47       | 88.64       | 93.01   | 93.51     |
-
-
-
-## 3. For Training
-
-### 3.1 Run 🚀
-
-The first stage is to train the Frame-level Detection Network (FDN):
-
- - ``` python train_stage1.py --dn PS --v1 0.25 --v2 0.1  --num_epoch 18 --save```
- - ``` python train_stage1.py --dn LAVDF --v1 0.3 --v2 0.15  --num_epoch 18 --save```
- - ``` python train_stage1.py --dn HAD --v1 0.15 --v2 0.1  --num_epoch 10 --save```
-
-The second stage is to train the Proposal Refinemant Network(PRN):
-
- - ``` python train_stage2.py --dn PS --num_epoch 50 --save```
+```
+bash run.sh
+```
 
 ## Acknowledgements
 This repository thanks several open-source projects: [PartialSpoof[1]](https://github.com/nii-yamagishilab/PartialSpoof), [TDL-ADD[2]](https://github.com/xieyuankun/TDL-ADD), [LAV-DF[3]](https://github.com/ControlNet/LAV-DF), [SSLAS[4]](https://github.com/TakHemlata/SSL_Anti-spoofing). 
